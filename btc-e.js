@@ -5,7 +5,7 @@ var request = require('request'),
 
 var BTCE = function(apiKey, secret, options) {
   this.url = 'https://btc-e.com/tapi';
-  this.publicApiUrl = 'https://btc-e.com/api/2/';
+  this.publicApiUrl = 'https://btc-e.com/api/3/';
   this.timeout = 5000;
   this.apiKey = apiKey;
   this.secret = secret;
@@ -98,9 +98,13 @@ BTCE.prototype.makeRequest = function(method, params, callback) {
   }, callback);
 };
 
-BTCE.prototype.makePublicApiRequest = function(pair, method, callback) {
+BTCE.prototype.makePublicApiRequest = function(pair, method, options, callback) {
+  var url = this.publicApiUrl + method + '/' + pair;
+  for (var k in options){
+      url+= '?' + k + '=' + options[k];
+  }
   this._sendRequest({
-    url: this.publicApiUrl + pair + '/' + method
+    url: url
   }, callback);
 };
 
@@ -160,8 +164,8 @@ BTCE.prototype.trades = function(pair, callback) {
   this.makePublicApiRequest(pair, 'trades', callback);
 };
 
-BTCE.prototype.depth = function(pair, callback) {
-  this.makePublicApiRequest(pair, 'depth', callback);
+BTCE.prototype.depth = function(pair, options, callback) {
+  this.makePublicApiRequest(pair, 'depth', options, callback);
 };
 
 BTCE.prototype.fee = function(pair, callback) {
